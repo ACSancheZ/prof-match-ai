@@ -1,6 +1,6 @@
 import { App, Notice, TFile } from "obsidian";
 import OpenAI from "openai";
-import { IaCvMakerPluginSettings } from "./plugin-settings";
+import { ProfMatchIaPluginSettings } from "./plugin-settings";
 
 export interface ExperienceEntry {
 	started: string;
@@ -10,12 +10,12 @@ export interface ExperienceEntry {
 	jobtitle: string;
 }
 
-export class IaCvMaker {
-	settings: IaCvMakerPluginSettings;
+export class ProfMatchIa {
+	settings: ProfMatchIaPluginSettings;
 	app: App;
 	openai: OpenAI;
 
-	constructor(app: App, settings: IaCvMakerPluginSettings) {
+	constructor(app: App, settings: ProfMatchIaPluginSettings) {
 		this.settings = settings;
 		this.app = app;
 		this.openai = new OpenAI({

@@ -1,12 +1,10 @@
-import IaCvMakerPlugin from "main";
+import ProfMatchIaPlugin from "main";
 import { App, TFile } from "obsidian";
 
 export class Utils {
-	plugin: IaCvMakerPlugin;
 	app: App;
 
-	constructor(app: App, plugin: IaCvMakerPlugin) {
-		this.plugin = plugin;
+	constructor(app: App) {
 		this.app = app;
 	}
 

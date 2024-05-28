@@ -1,7 +1,7 @@
-import IaCvMakerPlugin from "main";
+import ProfMatchIaPlugin from "main";
 import { App, PluginSettingTab, Setting } from "obsidian";
 
-export interface IaCvMakerPluginSettings {
+export interface ProfMatchIaPluginSettings {
 	apiKey: string;
 	experienceFolder: string;
 	jobDescriptionFile: string;
@@ -9,7 +9,7 @@ export interface IaCvMakerPluginSettings {
 	customPrompt: string;
 }
 
-export const DEFAULT_SETTINGS: IaCvMakerPluginSettings = {
+export const DEFAULT_SETTINGS: ProfMatchIaPluginSettings = {
 	apiKey: "",
 	experienceFolder: "path/to/your/markdown/folder",
 	jobDescriptionFile: "path/to/your/job-description-file.md",
@@ -18,10 +18,10 @@ export const DEFAULT_SETTINGS: IaCvMakerPluginSettings = {
 		//"Each professional experience start with ## job title | Company | Started year-month - Ended year-month, new line and my professional experience. I would like to have a output with ## job title | Company | Started year-month - Ended year-month, new line and the summarize of professional experience with around 500 character, focusing on relevant projects, responsibilities, achievements, and tools that align with the job requirements:",
 };
 
-export class IaCvMakerSettingTab extends PluginSettingTab {
-	plugin: IaCvMakerPlugin;
+export class ProfMatchIaSettingTab extends PluginSettingTab {
+	plugin: ProfMatchIaPlugin;
 
-	constructor(app: App, plugin: IaCvMakerPlugin) {
+	constructor(app: App, plugin: ProfMatchIaPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
