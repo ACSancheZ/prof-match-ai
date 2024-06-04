@@ -22,8 +22,6 @@
 		"typescript": "4.7.4"
 	},
 	"dependencies": {
-		"@types/axios": "^0.14.0",
-		"axios": "^1.7.2",
 		"openai": "^4.47.1"
 	}
 }
