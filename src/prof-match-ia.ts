@@ -1,6 +1,6 @@
 import { App, Notice, TFile } from "obsidian";
-import OpenAI from "openai";
 import { ProfMatchIaPluginSettings } from "./plugin-settings";
+import ChatGpt from "./chat-gpt";
 
 export interface ExperienceEntry {
 	started: string;
@@ -11,22 +11,19 @@ export interface ExperienceEntry {
 }
 
 export class ProfMatchIa {
+	MAX_CALLS_PER_MINUTE = 3;
+	INTERVAL_MS = (60 / this.MAX_CALLS_PER_MINUTE) * 1000; // Interval in milliseconds
+
 	settings: ProfMatchIaPluginSettings;
 	app: App;
-	openai: OpenAI;
 
 	constructor(app: App, settings: ProfMatchIaPluginSettings) {
 		this.settings = settings;
 		this.app = app;
-		this.openai = new OpenAI({
-			apiKey: settings.apiKey,
-			dangerouslyAllowBrowser: true,
-		});
 	}
 
-	async getExpiriencesOrganized(
-		experienceFiles: TFile[],
-		jobDescription: string
+	async getExpiriencesNotesFromFolder(
+		experienceFiles: TFile[]
 	): Promise<ExperienceEntry[]> {
 		console.log("Getting Summaries.");
 		const summaries: ExperienceEntry[] = [];
@@ -51,34 +48,40 @@ export class ProfMatchIa {
 		summaries: ExperienceEntry[],
 		jobDescription: string
 	): Promise<string> {
-		let content = summaries.reduce((acc, summary) => acc + `## ${summary.jobtitle} | ${summary.fileName} | ${summary.started} - ${summary.ended}\n${summary.summary}\n\n` , "");
-		// for (const summary of summaries) {
-		// 	content += summary.summary;
-		// 	//console.debug(`## ${summary.jobtitle} | ${summary.fileName} | ${summary.started} - ${summary.ended}`);
-		// }
+		const queue: string[] = [];
+		let chatGpt = new ChatGpt(this.settings);
 
-		const prompt = `Given the job description:\n\n${jobDescription}\n\n${this.settings.customPrompt}\n\n${content}`;
-		console.debug(`prompt: ${prompt}`);
-		const completion = await this.openai.chat.completions.create({
-			messages: [
-				{
-					role: "system",
-					content: prompt,
-				},
-			],
-			model: "gpt-3.5-turbo",
-		});
+		new Notice("This process involves accessing the ChatGPT API. Due to API limitations, experience processing will be performed in the background, and it may take several minutes. Your patience is appreciated. You will receive a notification when the process is complete.");
 
-		if (completion.choices && completion.choices.length > 0) {
-			console.debug(`response.data.choices[0].text.trim(): ${completion.choices[0].message}`);
-			return completion.choices[0].message.content || "";
-		} else {
-			return "Error: No response from ChatGPT";
+		// Add Job Description in the context
+		let jobDescriptionPrompt = this.settings.jobDescriptionPrompt.replace(
+			"{{job-description}}",
+			jobDescription
+		);
+		await chatGpt.getCompletion(jobDescriptionPrompt);
+		setTimeout(() => {}, 20000); // 20 seconds
+		new Notice("Registered Job Description in the Chat GPT context");
+
+		// Add Each Job Experience file to a ChatGPT call. It allows 3 calls per minute, so I have to implement a throttle.
+		let summarized = "";
+		for (const summary of summaries) {
+			setTimeout(() => {}, 20000); // 20 seconds
+			let content = `## ${summary.jobtitle} | ${summary.fileName} | ${summary.started} - ${summary.ended}\n${summary.summary}\n\n`;
+			let jobExperiencePrompt = this.settings.jobExperiencePrompt.replace(
+				"{{job-experience}}",
+				content
+			);
+			await chatGpt.getCompletion(jobExperiencePrompt).then((result) => {
+				summarized += result + "\n";
+			});
+			new Notice(`Get Job Experience: '${summary.fileName}' summarized.`);
 		}
+
+		return summarized;
 	}
 
 	async saveSummary(summaryContent: string, outputFolder: string) {
-		const folder = this.app.vault.getAbstractFileByPath(outputFolder);
+		const folder = this.app.vault.getFolderByPath(outputFolder);
 		if (!folder) {
 			await this.app.vault.createFolder(outputFolder);
 		}
@@ -96,7 +99,7 @@ export class ProfMatchIa {
 			.getMinutes()
 			.toString()
 			.padStart(2, "0")}`;
-		const outputFileName = `${dateString}-cv.md`;
+		const outputFileName = `Resume-${dateString}.md`;
 		const outputPath = `${outputFolder}/${outputFileName}`;
 
 		// const summaryContent = summaries

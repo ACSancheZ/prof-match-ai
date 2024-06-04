@@ -3,19 +3,24 @@ import { App, PluginSettingTab, Setting } from "obsidian";
 
 export interface ProfMatchIaPluginSettings {
 	apiKey: string;
+	model: string;
 	experienceFolder: string;
-	jobDescriptionFile: string;
+	curriculumsFolder: string;
+	jobOpportunitiesFolder: string;
 	outputFolder: string;
-	customPrompt: string;
+	jobDescriptionPrompt: string;
+	jobExperiencePrompt: string;
 }
 
 export const DEFAULT_SETTINGS: ProfMatchIaPluginSettings = {
 	apiKey: "",
-	experienceFolder: "path/to/your/markdown/folder",
-	jobDescriptionFile: "path/to/your/job-description-file.md",
-	outputFolder: "path/to/your/output/folder",
-	customPrompt: "Each professional experience of the text below starts with \"## job title | Company | Started year-month - Ended year-month then a new line and my professional experience\". I would like to have a output with all my professional experiences given in the format: \"## job title | Company | Started year-month - Ended year-month, then a new line and the summarize of professional experience\", with around 500 character in bullet points. To summary focus on the match of the job requirement with my experiences, than if it's possible mention relevant responsibilities, projects, achievements and tools for the job description. Do not mention periods or dates (but do not remove the dates of the first line, please), job-title or company in the summary, these information are present in the \"title\" of each experience.\nAdditionally, can you please change the year-month of the first line to a year month name, if a date is null, change it to Present:",
-		//"Each professional experience start with ## job title | Company | Started year-month - Ended year-month, new line and my professional experience. I would like to have a output with ## job title | Company | Started year-month - Ended year-month, new line and the summarize of professional experience with around 500 character, focusing on relevant projects, responsibilities, achievements, and tools that align with the job requirements:",
+	model: "gpt-3.5-turbo",
+	experienceFolder: "cv/experiences",
+	curriculumsFolder: "cv/templates",
+	jobOpportunitiesFolder: "cv/job-opportunities",
+	outputFolder: "cd/resumes",
+	jobDescriptionPrompt: "Given the job description: {{job-description}}",
+	jobExperiencePrompt: "Please, elaborate (500 characters maximum) with your words a job experience in bullets points with the strongest characteristics that match with the job description. My experience is:\n\n{{job-experience}}\n\n\nThe output format should be:\n#### Job Title | Company | Started Date - Finished Date (year and month name)\n- Bullet points",
 };
 
 export class ProfMatchIaSettingTab extends PluginSettingTab {
@@ -36,8 +41,8 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 		});
 
 		new Setting(containerEl)
-			.setName("Experience Folder")
-			.setDesc("Folder containing your experience Markdown files")
+			.setName("Job Experience Folder")
+			.setDesc("Folder containing your job experiences markdown files (Each job experience should be a Note).")
 			.addText((text) =>
 				text
 					.setPlaceholder("Enter folder path")
@@ -49,21 +54,34 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Job Description File")
-			.setDesc("Path to the job description Markdown file")
+			.setName("Curriculum Templates Folder")
+			.setDesc("Folder containing your curriculums templates notes. IMPORTANT: please add to your curriculum tamplate the place holder: '{{{{Job-Experiences}}}}'. You can find a example at ")
+			.addText((text) =>
+				text
+					.setPlaceholder("Enter folder path")
+					.setValue(this.plugin.settings.curriculumsFolder)
+					.onChange(async (value) => {
+						this.plugin.settings.curriculumsFolder = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Job Opportunities Folder")
+			.setDesc("Folder containing the job description notes")
 			.addText((text) =>
 				text
 					.setPlaceholder("Enter file path")
-					.setValue(this.plugin.settings.jobDescriptionFile)
+					.setValue(this.plugin.settings.jobOpportunitiesFolder)
 					.onChange(async (value) => {
-						this.plugin.settings.jobDescriptionFile = value;
+						this.plugin.settings.jobOpportunitiesFolder = value;
 						await this.plugin.saveSettings();
 					})
 			);
 
 		new Setting(containerEl)
 			.setName("Output Folder")
-			.setDesc("Folder to save the summarized Markdown files")
+			.setDesc("Folder to save the summarized curriculums in a note")
 			.addText((text) =>
 				text
 					.setPlaceholder("Enter folder path")
@@ -92,17 +110,45 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl)
-			.setName("Prompt to summiraze")
+			new Setting(containerEl)
+			.setName("Chat GPT Model")
+			.setDesc("Enter the model that you want to use.")
+			.addText((text) =>
+				text
+					.setPlaceholder("Enter the model")
+					.setValue(this.plugin.settings.model)
+					.onChange(async (value) => {
+						this.plugin.settings.model = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+			new Setting(containerEl)
+			.setName("Prompt to identify the Job Description")
 			.setDesc(
-				"You can customize the prompt used to summiraze the curriculum."
+				"You can customize the prompt used to ChatGPT read the Job Description.\n\nIMPORTANT: please add the placeholder '{{job-description}}'"
 			)
 			.addText((text) =>
 				text
 					.setPlaceholder("Enter your customized prompt")
-					.setValue(this.plugin.settings.customPrompt)
+					.setValue(this.plugin.settings.jobDescriptionPrompt)
 					.onChange(async (value) => {
-						this.plugin.settings.apiKey = value;
+						this.plugin.settings.jobDescriptionPrompt = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+			new Setting(containerEl)
+			.setName("Prompt to summiraze one Job Experience")
+			.setDesc(
+				"You can customize the prompt used to summiraze each job experience that will be added in the curriculum.\n\nIMPORTANT: please add the placeholder '{{job-experience}}'"
+			)
+			.addText((text) =>
+				text
+					.setPlaceholder("Enter your customized prompt")
+					.setValue(this.plugin.settings.jobExperiencePrompt)
+					.onChange(async (value) => {
+						this.plugin.settings.jobExperiencePrompt = value;
 						await this.plugin.saveSettings();
 					})
 			);

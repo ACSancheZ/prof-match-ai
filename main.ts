@@ -1,6 +1,4 @@
-import {
-	Plugin
-} from "obsidian";
+import {Plugin} from "obsidian";
 import {
 	DEFAULT_SETTINGS,
 	ProfMatchIaPluginSettings,
@@ -10,7 +8,8 @@ import Orchestrator from "src/orchestrator";
 
 export default class ProfMatchIaPlugin extends Plugin {
 	settings: ProfMatchIaPluginSettings;
-	orchestrator: Orchestrator;
+	private orchestrator: Orchestrator;
+	template_folder: string;
 
 	async onload() {
 		console.log("Loading Professional Experience Summary plugin");
