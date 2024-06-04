@@ -1,96 +1,123 @@
-# Obsidian Sample Plugin
+# AI Curriculum Maker
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+This Obsidian plugin effortlessly matches your professional experience notes with job descriptions using AI.
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
+## Objective
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+The plugin gathers all job experience notes from a designated folder and uses ChatGPT to create a personalized job experience description tailored to specific job opportunities.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## Note Groups
+There are three main groups of notes:
+1. Job Experience: A folder containing notes for each job experience. Please include every task and responsibility you had in each job.
+1. Job Opportunity Description: Add the job description to a note (preferably in a specific folder). The plugin will use this content to customize your CV, matching key points of your job experiences with the job requirements.
+1. Curriculum Template: One or more files containing static CV information such as your name, mobile number, email, LinkedIn profile, etc.
 
-## First time developing plugins?
+## Rules
+- Add your ChatGPT AppKey, which you can create on platform.openai.com.
+- Name each note after the company.
+- Each Job Experience note must include the following metadata:
+  - started
+  - ended
+  - job-title
+- In the template, include a placeholder {{Job-Experiences}} to indicate where the AI-generated job experiences should be placed.
 
-Quick starting guide for new plugin devs:
+## Usage
+To use the plugin, open the command palette and type: **Generate Summary**.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+## Example of organization
+Create the following files and configure the folder path in settings.
+- cv/templates/curriculum-spain.md
+```md
+# Antonio Sanchez dos Santos
+:LiMail: acsanchez@laksdjflaa.com     :LiPhone:+34 6845642476     :LiMapPin: Valencia, Valencia 
+:LiLinkedin: in/antoniocsanchez     :LiLanguages: English, Spanish and Portuguese     :LiGithub: [acsanchez](https://github.com/ACSancheZ/)
 
-## Releasing new releases
+---
+## Experience
+{{Job-Experiences}}
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+---
+## Certifications
+#### Power Platform Fundamentals | Microsoft | 2022
+- Certified in the business value and product capabilities of Microsoft Power Platform. Create simple Power Apps, connect data with Microsoft Dataverse, build a Power BI Dashboard, automate a process with Power Automate, or build a chatbot with Power Virtual Agents.
+#### Azure Developer | Microsoft | 2021
+- Certified in participating in all phases of development, including requirements gathering, design, development, deployment, security, maintenance, performance tuning, and monitoring.
+#### Azure Fundamentals | Microsoft | 2021
+- Certified in foundational knowledge of cloud services and how those services are provided with Microsoft Azure.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-## How to use
-
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+---
+## Education
+**Technical graduation in Marketing**
+Fundação Escola de Comércio Alvares Penteado • São Paulo, Brazil • 1999
 ```
 
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+- cv/job-opportunities/job-description.md
+```md
+Who we are
+Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+Requirements:
+Experience with Azure cloud platforms Architecture
+Experience working in a high performance Agile/DevOps environment
+Experience with infrastructure as a code provisioning tools with Terraform or
+similar
+Experience with configuration management and deployment tools such as
+Jenkins, Azure devops.
+Advanced knowledge of scripting, Git, and Git workflows.
+Experience developing continuous integration and continuous delivery
+(CI/CD) pipelines to automate tests and deployments.
+Experience with container management software such as Docker or
+Kubernetes.
+Experience working with at least one of the following languages: Node.js,
+Python, PHP, Ruby, .NET or Java
+Experience in Scrum and Kanban
+Communication skills, autonomy and teamwork.
+Ability to organise, dynamism.
+```
+- cv/job-experience/Lorem-Ipsum-Name-Company.md
+```md
+---
+created: 2024-05-26 00:02
+started: 2011-10
+ended: 2013-02
+job-title: Business Analyst & Developer
+tags:
+---
+# Projects
+- Lorem Ipsum
+# Responsibilities
+- Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+- The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.
+# Achievements
+- There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+# Tools
+- SSIS
+- SSAS
+- SSRS
+- C#
+- SQLite
+- MS SQL Server
 ```
 
-## API Documentation
+- cv/job-experience/Lorem-Name-Company.md
+```md
+---
+created: 2024-05-26 00:02
+started: 2014-04
+ended: 2019-09
+job-title: Leader Developer
+tags:
+---
+# Projects
+- Lorem Ipsum
+# Responsibilities
+- Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+- The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.
+# Achievements
+- There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+# Tools
+- EDI
+- C#
+- MS SQL Server
+```
 
-See https://github.com/obsidianmd/obsidian-api
+It is possible to configure the prompt in the settings.
