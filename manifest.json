@@ -1,5 +1,5 @@
 {
-	"id": "ia-cv-maker-plugin",
+	"id": "ia-cv-maker",
 	"name": "IA Curriculum Maker",
 	"version": "0.0.2",
 	"minAppVersion": "0.15.0",
