@@ -11,7 +11,7 @@ permissions:
   contents: write  # Ensure the workflow has write permissions
 
 jobs:
-  build-and-release:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,6 +29,10 @@ jobs:
     - name: Build the application
       run: npm run build
 
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -40,6 +44,10 @@ jobs:
         draft: false
         prerelease: false
 
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
     - name: Upload main.js
       uses: actions/upload-release-asset@v1
       env:
