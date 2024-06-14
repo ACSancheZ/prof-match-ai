@@ -1,0 +1,84 @@
+name: Node.js Release on Tag
+
+on:
+  push:
+    tags:
+      - '*'
+    branches:
+      - master
+
+permissions:
+  contents: write  # Ensure the workflow has write permissions
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build the application
+      run: npm run build
+
+    - name: Check if release exists
+      id: check_release
+      run: |
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        RELEASE_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                          -H "Accept: application/vnd.github.v3+json" \
+                          https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG_NAME \
+                          | jq -r '.id')
+        if [ "$RELEASE_ID" == "null" ]; then
+          echo "Release does not exist. Creating a new release."
+          echo "CREATE_RELEASE=true" >> $GITHUB_ENV
+        else
+          echo "Release already exists. Updating the existing release."
+          echo "CREATE_RELEASE=false" >> $GITHUB_ENV
+          echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
+        fi
+
+    - name: Create or update release
+      id: create_or_update_release
+      run: |
+        if [ "${{ env.CREATE_RELEASE }}" == "true" ]; then
+          response=$(curl -s -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        https://api.github.com/repos/${{ github.repository }}/releases \
+                        -d "{\"tag_name\":\"${GITHUB_REF#refs/tags/}\", \"name\":\"${GITHUB_REF#refs/tags/}\", \"draft\":false, \"prerelease\":false}")
+          echo "RELEASE_UPLOAD_URL=$(echo $response | jq -r '.upload_url')" >> $GITHUB_ENV
+        else
+          response=$(curl -s -X PATCH -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                        -H "Accept: application/vnd.github.v3+json" \
+                        https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID \
+                        -d "{\"tag_name\":\"${GITHUB_REF#refs/tags/}\", \"name\":\"${GITHUB_REF#refs/tags/}\", \"draft\":false, \"prerelease\":false}")
+          echo "RELEASE_UPLOAD_URL=$(echo $response | jq -r '.upload_url')" >> $GITHUB_ENV
+        fi
+
+    - name: Upload main.js
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ env.RELEASE_UPLOAD_URL }}
+        asset_path: main.js
+        asset_name: main.js
+        asset_content_type: application/javascript
+
+    - name: Upload manifest.json
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ env.RELEASE_UPLOAD_URL }}
+        asset_path: manifest.json
+        asset_name: manifest.json
+        asset_content_type: application/json
