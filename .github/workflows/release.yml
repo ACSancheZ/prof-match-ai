@@ -63,16 +63,6 @@ jobs:
           echo "RELEASE_UPLOAD_URL=$(echo $response | jq -r '.upload_url')" >> $GITHUB_ENV
         fi
 
-    - name: Upload build file
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ env.RELEASE_UPLOAD_URL }}
-        asset_path: dist/app.js  # Path to your build file
-        asset_name: app.js  # Name of your build file
-        asset_content_type: application/javascript
-
     - name: Upload main.js
       uses: actions/upload-release-asset@v1
       env:
