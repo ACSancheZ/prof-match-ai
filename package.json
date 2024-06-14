@@ -1,6 +1,6 @@
 {
 	"name": "ia-cv-maker-plugin",
-	"version": "0.0.1",
+	"version": "0.0.5",
 	"description": "",
 	"main": "main.js",
 	"scripts": {
