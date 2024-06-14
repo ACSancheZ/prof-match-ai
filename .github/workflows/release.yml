@@ -31,7 +31,8 @@ jobs:
 
   create-release:
     runs-on: ubuntu-latest
-
+    permissions: write-all
+    
     steps:
     - name: Create release
       id: create_release
@@ -46,6 +47,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    permissions: write-all
     
     steps:
     - name: Upload main.js
