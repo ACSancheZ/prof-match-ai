@@ -18,7 +18,7 @@ export class Utils {
 	}
 
 	async getJobDescription(filePath: string): Promise<string | null> {
-		const file = this.app.vault.getAbstractFileByPath(filePath) as TFile;
+		const file = this.app.vault.getAbstractFileByPath(filePath);
 		if (file && file instanceof TFile) {
 			return await this.app.vault.read(file);
 		}
