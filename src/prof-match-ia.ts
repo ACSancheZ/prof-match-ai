@@ -25,7 +25,6 @@ export class ProfMatchIa {
 	async getExpiriencesNotesFromFolder(
 		experienceFiles: TFile[]
 	): Promise<ExperienceEntry[]> {
-		console.log("Getting Summaries.");
 		const summaries: ExperienceEntry[] = [];
 		for (const file of experienceFiles) {
 			const content = await this.app.vault.read(file);
@@ -59,8 +58,7 @@ export class ProfMatchIa {
 			jobDescription
 		);
 		await chatGpt.getCompletion(jobDescriptionPrompt);
-		setTimeout(() => {}, 20000); // 20 seconds
-		new Notice("Registered Job Description in the Chat GPT context");
+		new Notice("Registered job description in the chat GPT context");
 
 		// Add Each Job Experience file to a ChatGPT call. It allows 3 calls per minute, so I have to implement a throttle.
 		let summarized = "";
@@ -74,7 +72,7 @@ export class ProfMatchIa {
 			await chatGpt.getCompletion(jobExperiencePrompt).then((result) => {
 				summarized += result + "\n";
 			});
-			new Notice(`Get Job Experience: '${summary.fileName}' summarized.`);
+			new Notice(`Get job experience: '${summary.fileName}' summarized.`);
 		}
 
 		return summarized;
@@ -101,15 +99,6 @@ export class ProfMatchIa {
 			.padStart(2, "0")}`;
 		const outputFileName = `Resume-${dateString}.md`;
 		const outputPath = `${outputFolder}/${outputFileName}`;
-
-		// const summaryContent = summaries
-		// 	.map(
-		// 		(entry) =>
-		// 			`## ${entry.jobtitle} | ${entry.fileName} | ${
-		// 				entry.started
-		// 			} - ${entry.ended || "Present"}\n\n${entry.summary}`
-		// 	)
-		// 	.join("\n\n");
 
 		await this.app.vault.create(outputPath, summaryContent);
 		new Notice(`Created new file: ${outputPath}`);
