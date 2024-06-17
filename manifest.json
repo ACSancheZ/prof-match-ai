@@ -1,7 +1,7 @@
 {
 	"id": "ai-cv-maker",
 	"name": "AI Curriculum Maker",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"minAppVersion": "1.5.12",
 	"description": "Effortlessly match professional experiences notes to jobs description using AI.",
 	"author": "Antonio Sanchez dos Santos",
