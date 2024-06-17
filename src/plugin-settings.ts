@@ -36,12 +36,8 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h2", {
-			text: "Professional Experience Summary Settings",
-		});
-
 		new Setting(containerEl)
-			.setName("Job Experience Folder")
+			.setName("Job experience folder")
 			.setDesc("Folder containing your job experiences markdown files (Each job experience should be a Note).")
 			.addText((text) =>
 				text
@@ -54,7 +50,7 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Curriculum Templates Folder")
+			.setName("Curriculum templates folder")
 			.setDesc("Folder containing your curriculums templates notes. IMPORTANT: please add to your curriculum tamplate the place holder: '{{{{Job-Experiences}}}}'. You can find a example at ")
 			.addText((text) =>
 				text
@@ -67,7 +63,7 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Job Opportunities Folder")
+			.setName("Job opportunities folder")
 			.setDesc("Folder containing the job description notes")
 			.addText((text) =>
 				text
@@ -80,7 +76,7 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Output Folder")
+			.setName("Output folder")
 			.setDesc("Folder to save the summarized curriculums in a note")
 			.addText((text) =>
 				text
@@ -93,12 +89,10 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 
-		containerEl.createEl("h2", {
-			text: "Open AI Configurations",
-		});
+		new Setting(containerEl).setName("Open AI configurations").setHeading();
 
 		new Setting(containerEl)
-			.setName("OpenAI API Key")
+			.setName("OpenAI API key")
 			.setDesc("Enter your OpenAI API key")
 			.addText((text) =>
 				text
@@ -111,7 +105,7 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 			new Setting(containerEl)
-			.setName("Chat GPT Model")
+			.setName("Chat GPT model")
 			.setDesc("Enter the model that you want to use.")
 			.addText((text) =>
 				text
@@ -124,7 +118,7 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 			new Setting(containerEl)
-			.setName("Prompt to identify the Job Description")
+			.setName("Prompt to identify the job description")
 			.setDesc(
 				"You can customize the prompt used to ChatGPT read the Job Description.\n\nIMPORTANT: please add the placeholder '{{job-description}}'"
 			)
@@ -139,7 +133,7 @@ export class ProfMatchIaSettingTab extends PluginSettingTab {
 			);
 
 			new Setting(containerEl)
-			.setName("Prompt to summiraze one Job Experience")
+			.setName("Prompt to summiraze one job experience")
 			.setDesc(
 				"You can customize the prompt used to summiraze each job experience that will be added in the curriculum.\n\nIMPORTANT: please add the placeholder '{{job-experience}}'"
 			)

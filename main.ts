@@ -12,13 +12,12 @@ export default class ProfMatchIaPlugin extends Plugin {
 	template_folder: string;
 
 	async onload() {
-		console.log("Loading Professional Experience Summary plugin");
 		await this.loadSettings();
 		this.orchestrator = new Orchestrator(this.app, this.settings);
 
 		this.addCommand({
-			id: "generate-summary",
-			name: "Generate Summary",
+			id: "generate-job-experiences",
+			name: "Generate job experiences",
 			callback: async () => {
 				this.orchestrator.summarize();
 			},

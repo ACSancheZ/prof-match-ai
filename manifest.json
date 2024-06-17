@@ -1,6 +1,6 @@
 {
-	"id": "ia-cv-maker",
-	"name": "IA Curriculum Maker",
+	"id": "ai-cv-maker",
+	"name": "AI Curriculum Maker",
 	"version": "0.0.6",
 	"minAppVersion": "1.5.12",
 	"description": "Effortlessly match professional experiences notes to jobs description using AI.",
